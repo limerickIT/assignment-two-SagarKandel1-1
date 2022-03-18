@@ -7,10 +7,12 @@ package com.sd4.controller;
 
 import com.sd4.model.Beer;
 import com.sd4.service.BeerService;
+import com.sd4.service.BreweryService;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,13 +30,18 @@ public class BeerController {
    
      @Autowired
     private BeerService beerService;
+     
+     @Autowired
+    private BreweryService breweryService;
     
     @GetMapping("/beers")
     public List<Beer> getAll() {
         return beerService.findAll();
     }
     
-    @GetMapping("/beers/{id}")
+    
+    
+    @GetMapping(value = "/beers/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Beer> getOne(@PathVariable long id) {
        Optional<Beer> o =  beerService.findOne(id);
        
