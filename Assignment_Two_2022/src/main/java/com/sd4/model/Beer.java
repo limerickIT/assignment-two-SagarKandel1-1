@@ -20,6 +20,7 @@ import lombok.ToString;
 
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import org.springframework.hateoas.RepresentationModel;
 
 @Getter
 @Setter
@@ -27,8 +28,9 @@ import javax.persistence.Lob;
 @AllArgsConstructor
 @ToString
 @Entity
-public class Beer implements Serializable {
-
+public class Beer extends RepresentationModel<Beer> {
+//public class Beer extends RepresentationModel<Beer> =
+//The Beer resource extends from the RepresentationModel class to inherit the add() method
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
