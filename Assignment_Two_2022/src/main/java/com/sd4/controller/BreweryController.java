@@ -5,9 +5,14 @@
  */
 package com.sd4.controller;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.sd4.model.Beer;
 import com.sd4.service.BreweryService;
 import com.sd4.model.Brewery;
+import java.awt.image.BufferedImage;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -64,5 +69,13 @@ public class BreweryController {
         return null; 
         }
     }
+    
+    public static BufferedImage generateQRCodeImage(String barcodeText) throws Exception {
+    QRCodeWriter barcodeWriter = new QRCodeWriter();
+    BitMatrix bitMatrix = 
+      barcodeWriter.encode(barcodeText, BarcodeFormat.QR_CODE, 200, 200);
+
+    return MatrixToImageWriter.toBufferedImage(bitMatrix);
+}
 
 }

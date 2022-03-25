@@ -13,7 +13,9 @@ import com.sd4.service.BeerService;
 import com.sd4.service.BreweryService;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import static java.nio.file.Files.size;
@@ -22,10 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -119,20 +125,18 @@ public class BeerController {
 
     //Return Images
     @GetMapping(value = "/beers/image/{size}/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<BufferedImage> getBeerImage(@PathVariable("id") long id, @PathVariable("size") String size) throws Exception {
-        Optional<Beer> o = beerService.findOne(id);
-        if (o.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        String path = "static/assets/images/"
-                + ("thumbnail".equalsIgnoreCase(size) ? "thumbs" : "large")
-                + "/" + o.get().getImage();
-        System.out.println(path);
-        final InputStream inputStream = new ClassPathResource(path).getInputStream();
-        BufferedImage bufferedImage = ImageIO.read(inputStream);
-        return ResponseEntity.ok(bufferedImage);
-    }
+public ResponseEntity<BufferedImage> getBeerImage(@PathVariable("id") long id, @PathVariable("size") String size) throws Exception
+{
+   Optional<Beer> o = beerService.findOne(id);
+if (o.isEmpty())
+{
+return new ResponseEntity(HttpStatus.NOT_FOUND);
+} String path = "static/assets/images/"
++ ("thumbnail".equalsIgnoreCase(size) ? "thumbs" : "large")
++ "/" + o.get().getImage(); System.out.println(path);
+final InputStream inputStream = new ClassPathResource(path).getInputStream(); BufferedImage bufferedImage = ImageIO.read(inputStream);
+return ResponseEntity.ok(bufferedImage);
+}
 
 //Download Images
- 
 }
