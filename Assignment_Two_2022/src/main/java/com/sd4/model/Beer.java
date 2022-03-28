@@ -5,7 +5,7 @@
  */
 package com.sd4.model;
 
-import java.io.Serializable;
+
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -41,6 +41,12 @@ public class Beer extends RepresentationModel<Beer> {
     private Double abv;
     private Double ibu;
     private Double srm;
+      
+ 
+    private Brewery brewery;
+    private String getName;
+    private Category category;
+    private Style style;
     
     @Lob 
     private String description;
@@ -53,4 +59,5 @@ public class Beer extends RepresentationModel<Beer> {
     private Double buy_price;
     private Double sell_price;
 
+    
 }

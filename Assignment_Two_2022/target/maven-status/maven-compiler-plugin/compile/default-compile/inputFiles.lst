@@ -1,7 +1,9 @@
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/service/BeerService.java
+/Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/controller/QRGenerator.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/repository/BeerRepository.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/service/CategoryService.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/application/ServletInitializer.java
+/Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/controller/BreweryController.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/model/Category.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/model/Style.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/service/BreweryService.java
@@ -9,5 +11,6 @@
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/controller/BeerController.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/application/AssignmentTwo2022Application.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/model/Breweries_Geocode.java
+/Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/controller/PDFGenerator.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/model/Brewery.java
 /Users/sagarkandel/Documents/assignment-two-SagarKandel1-1/Assignment_Two_2022/src/main/java/com/sd4/model/Beer.java

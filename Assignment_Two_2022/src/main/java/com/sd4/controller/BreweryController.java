@@ -12,6 +12,14 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.sd4.model.Beer;
 import com.sd4.service.BreweryService;
 import com.sd4.model.Brewery;
+import com.sd4.controller.QRGenerator;
+import ezvcard.Ezvcard;
+import ezvcard.VCard;
+import ezvcard.VCardVersion;
+import ezvcard.property.Address;
+import ezvcard.property.Email;
+import ezvcard.property.StructuredName;
+import ezvcard.property.Telephone;
 import java.awt.image.BufferedImage;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -69,13 +77,42 @@ public class BreweryController {
         return null; 
         }
     }
+     @GetMapping(value = "/brewery/qr/{id}", produces = MediaType.TEXT_HTML_VALUE)
+ public ResponseEntity<BufferedImage> generateQRCodeImage(@PathVariable long id) throws Exception  {
     
-    public static BufferedImage generateQRCodeImage(String barcodeText) throws Exception {
-    QRCodeWriter barcodeWriter = new QRCodeWriter();
-    BitMatrix bitMatrix = 
-      barcodeWriter.encode(barcodeText, BarcodeFormat.QR_CODE, 200, 200);
+        Optional<Brewery> o = breweryService.findOne(id);
+        if (!o.isPresent()) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } else {
+            
+            VCard vcard = new VCard();
 
-    return MatrixToImageWriter.toBufferedImage(bitMatrix);
-}
+            StructuredName n = new StructuredName();
+            n.setGiven(o.get().getName());
+            vcard.setStructuredName(n);
+
+            Address vCardAddress = new Address();
+            vCardAddress.setCountry(o.get().getCountry());
+            vCardAddress.setRegion(o.get().getState());
+            vCardAddress.setLocality(o.get().getCity());
+            vCardAddress.setPostalCode(o.get().getCode());
+            vCardAddress.setStreetAddress(o.get().getAddress1() + " " + o.get().getAddress2());
+            vcard.addAddress(vCardAddress);
+
+            Telephone tel = new Telephone(o.get().getPhone());
+            vcard.addTelephoneNumber(tel);
+            Email email = new Email(o.get().getEmail());
+            vcard.addEmail(email);
+
+            vcard.addUrl(o.get().getWebsite());
+            String str = Ezvcard.write(vcard).version(VCardVersion.V4_0).go();
+
+            return okResponse( QRGenerator.generateQRCodeImage(str));
+        }
+    }
+
+    private ResponseEntity<BufferedImage> okResponse(BufferedImage image) {
+        return new ResponseEntity<>(image, HttpStatus.OK);
+    }
 
 }
