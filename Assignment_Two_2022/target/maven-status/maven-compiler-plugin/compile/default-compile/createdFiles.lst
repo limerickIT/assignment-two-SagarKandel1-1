@@ -1,9 +1,11 @@
+com/sd4/repository/CategoryRepository.class
+com/sd4/repository/StyleRepository.class
 com/sd4/repository/BreweryRepository.class
 com/sd4/application/ServletInitializer.class
 com/sd4/model/Category.class
 com/sd4/service/BreweryService.class
 com/sd4/model/Style.class
-com/sd4/controller/QRGenerator.class
+com/sd4/service/StyleService.class
 com/sd4/model/Brewery.class
 com/sd4/service/BeerService.class
 com/sd4/repository/BeerRepository.class

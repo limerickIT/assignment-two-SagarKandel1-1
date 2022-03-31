@@ -5,6 +5,7 @@
  */
 package com.sd4.service;
 
+import com.itextpdf.text.Paragraph;
 import com.sd4.model.Beer;
 import com.sd4.repository.BeerRepository;
 import java.util.List;

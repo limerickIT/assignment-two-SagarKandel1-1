@@ -6,24 +6,19 @@
 package com.sd4.controller;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.sd4.model.Beer;
 import com.sd4.service.BreweryService;
 import com.sd4.model.Brewery;
-import com.sd4.controller.QRGenerator;
-import ezvcard.Ezvcard;
-import ezvcard.VCard;
-import ezvcard.VCardVersion;
-import ezvcard.property.Address;
-import ezvcard.property.Email;
-import ezvcard.property.StructuredName;
-import ezvcard.property.Telephone;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+import javax.imageio.ImageIO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +28,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -43,76 +37,74 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 
 public class BreweryController {
-    
+
     @Autowired
     private BreweryService breweryService;
-    
-    
-   
-   
-    
-    @GetMapping(value ="/brewery/count", produces = {MediaType.APPLICATION_JSON_VALUE})
+
+    @GetMapping(value = "/brewery/count", produces = {MediaType.APPLICATION_JSON_VALUE})
     public long getCount() {
         return breweryService.count();
     }
-    
-    @DeleteMapping(value ="/brewery/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+
+    @DeleteMapping(value = "/brewery/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity delete(@PathVariable long id) {
         breweryService.deleteByID(id);
         return new ResponseEntity(HttpStatus.OK);
     }
-    
-    @PostMapping(value ="/brewery/add", produces = {MediaType.APPLICATION_JSON_VALUE})
+
+    @PostMapping(value = "/brewery/add", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity add(@RequestBody Brewery a) {
         breweryService.saveBrewery(a);
         return new ResponseEntity(HttpStatus.CREATED);
     }
-  @GetMapping(value = "/brewery/map/{id}", produces = MediaType.TEXT_HTML_VALUE)
-    public String getAddress(@PathVariable long id) {
+    //Getting Brewery MapLoactoion
 
-        Optional<Brewery> o = breweryService.findOne(id);
-        if (!o.isPresent()) {
-            return "<h1>ERROR BREWERY NOT FOUND";
-        } else {
-        return null; 
-        }
-    }
-     @GetMapping(value = "/brewery/qr/{id}", produces = MediaType.TEXT_HTML_VALUE)
- public ResponseEntity<BufferedImage> generateQRCodeImage(@PathVariable long id) throws Exception  {
-    
-        Optional<Brewery> o = breweryService.findOne(id);
-        if (!o.isPresent()) {
+    @GetMapping(value = "/brewery/map/{id}")
+    public ResponseEntity getBreweryMap(@PathVariable long id) {
+
+        Optional<Brewery> b = breweryService.findOne(id);
+
+        if (!b.isPresent()) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         } else {
-            
-            VCard vcard = new VCard();
+            String mapCoordinates = b.get().getName() + "" + b.get().getAddress1() + " "
+                    + b.get().getAddress2() + " "
+                    + b.get().getCity() + " " + b.get().getCity() + " "
+                    + b.get().getCode() + " " + b.get().getCountry();
 
-            StructuredName n = new StructuredName();
-            n.setGiven(o.get().getName());
-            vcard.setStructuredName(n);
+            return ResponseEntity.ok("<html><body><h2>"+ mapCoordinates
+                    + "</h2<iframe width=\"100%\" height=\"500\" id=\"gmap_canvas\"src=\"https://maps.google.com/maps?q="
+                    + mapCoordinates
+                    + "=&output=embed\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\"></iframe>"
+            );
 
-            Address vCardAddress = new Address();
-            vCardAddress.setCountry(o.get().getCountry());
-            vCardAddress.setRegion(o.get().getState());
-            vCardAddress.setLocality(o.get().getCity());
-            vCardAddress.setPostalCode(o.get().getCode());
-            vCardAddress.setStreetAddress(o.get().getAddress1() + " " + o.get().getAddress2());
-            vcard.addAddress(vCardAddress);
-
-            Telephone tel = new Telephone(o.get().getPhone());
-            vcard.addTelephoneNumber(tel);
-            Email email = new Email(o.get().getEmail());
-            vcard.addEmail(email);
-
-            vcard.addUrl(o.get().getWebsite());
-            String str = Ezvcard.write(vcard).version(VCardVersion.V4_0).go();
-
-            return okResponse( QRGenerator.generateQRCodeImage(str));
+ 
         }
     }
 
-    private ResponseEntity<BufferedImage> okResponse(BufferedImage image) {
-        return new ResponseEntity<>(image, HttpStatus.OK);
+    //Getting Brewery QRCODE
+    @GetMapping(value = "brewery/QRCode/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getCode(@PathVariable("id") long id) throws WriterException, IOException {
+
+        Optional<Brewery> b = breweryService.findOne(id);
+
+        String QRCODEDEATILS = "MECARD:N" + b.get().getName() + ";"
+                + "ADR:" + b.get().getAddress1() + " " + b.get().getAddress2() + " " + b.get().getCity() + " " + b.get().getCode() + " " + b.get().getCountry() + ";"
+                + "EMAIL:" + b.get().getEmail() + ";"
+                + "TEL:" + b.get().getPhone() + ";" + "URL" + b.get().getWebsite() + ";";
+
+        System.out.println(QRCODEDEATILS);
+
+        QRCodeWriter barcodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = barcodeWriter.encode(QRCODEDEATILS, BarcodeFormat.QR_CODE, 500, 500);
+
+        BufferedImage code = MatrixToImageWriter.toBufferedImage(bitMatrix);
+        ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+        ImageIO.write(code, "jpeg", bytearrayoutputstream);
+        bytearrayoutputstream.flush();
+        byte[] codeInBytes = bytearrayoutputstream.toByteArray();
+        bytearrayoutputstream.close();
+        return codeInBytes;
     }
 
 }

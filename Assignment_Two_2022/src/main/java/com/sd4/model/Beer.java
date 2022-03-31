@@ -36,8 +36,8 @@ public class Beer extends RepresentationModel<Beer> {
     private long id;
     private long brewery_id;
     private String name;
-    private Integer cat_id;
-    private Integer style_id;
+    private long cat_id;
+    private long style_id;
     private Double abv;
     private Double ibu;
     private Double srm;
