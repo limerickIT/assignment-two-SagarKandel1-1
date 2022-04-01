@@ -72,13 +72,11 @@ public class BreweryController {
                     + b.get().getCity() + " " + b.get().getCity() + " "
                     + b.get().getCode() + " " + b.get().getCountry();
 
-            return ResponseEntity.ok("<html><body><h2>"+ mapCoordinates
-                    + "</h2<iframe width=\"100%\" height=\"500\" id=\"gmap_canvas\"src=\"https://maps.google.com/maps?q="
-                    + mapCoordinates
-                    + "=&output=embed\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\"></iframe>"
-            );
-
- 
+            return ResponseEntity.ok(
+                    "<html><body>"
+                    + "<h2>" + "[" + mapCoordinates + "]" + "</h2>"
+                    + "<iframe width=\"1000\" height=\"1000\" id=\"gmap_canvas\" src=\"https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=" + URLEncoder.encode(mapCoordinates, StandardCharsets.UTF_8)
+                    + "=&output=embed\"  frameborder=\"0\" scrolling=\"no\" </iframe>");
         }
     }
 

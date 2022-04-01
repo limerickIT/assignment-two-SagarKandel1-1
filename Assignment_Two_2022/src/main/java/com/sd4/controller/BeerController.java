@@ -27,24 +27,26 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.ClassPathResource;;
 import org.springframework.core.io.Resource;
 import org.springframework.hateoas.Link;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  *
@@ -63,9 +65,29 @@ public class BeerController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/beers/GetAll")
-    public List<Beer> getAll() {
-        return beerService.findAll();
+//    @GetMapping("/beers/GetAll")
+//    public List<Beer> getAll() {
+//        return beerService.findAll();
+//    }
+    
+    
+    @GetMapping(value = "beers/GetAll", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Beer> getAllBeers(@RequestParam(name = "size", required = false) Integer size, @RequestParam(name = "offset", required = false) Integer offset) {
+        List<Beer> beersList = beerService.findAll();
+
+        if (size == null && offset == null) {
+            size = 0;
+            offset = 0;
+        }
+
+        List<Beer> pagList = beersList.subList(offset, offset + size);
+
+        for (Beer b : pagList) {
+            long id = b.getId();
+            Link selfLink = linkTo(methodOn(BeerController.class).getOne(id)).withSelfRel();
+            b.add(selfLink);
+        }
+        return pagList;
     }
 
     //get one by id
@@ -132,7 +154,7 @@ public class BeerController {
     //Return Images
        
     @GetMapping(value = "/beers/image/{id}/{size}",produces = MediaType.IMAGE_JPEG_VALUE)
-    byte[] getImagesOfBeer(@PathVariable long id, @PathVariable String size) throws IOException { 
+     public @ResponseBody byte[] getImagesOfBeer(@PathVariable long id, @PathVariable String size) throws IOException { 
     
             Optional<Beer> b = beerService.findOne(id);
     
@@ -219,4 +241,6 @@ public class BeerController {
             return new ResponseEntity(IOUtils.toByteArray(inputStream), responseHeaders, HttpStatus.OK);
         }
     }
+
+
 }
