@@ -75,7 +75,7 @@ public class BreweryController {
             return ResponseEntity.ok(
                     "<html><body>"
                     + "<h2>" + "[" + mapCoordinates + "]" + "</h2>"
-                    + "<iframe width=\"1000\" height=\"1000\" id=\"gmap_canvas\" src=\"https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=" + URLEncoder.encode(mapCoordinates, StandardCharsets.UTF_8)
+                    + "<iframe width=\"1000\" height=\"500\" id=\"gmap_canvas\" src=\"https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=" + URLEncoder.encode(mapCoordinates, StandardCharsets.UTF_8)
                     + "=&output=embed\"  frameborder=\"0\" scrolling=\"no\" </iframe>");
         }
     }
