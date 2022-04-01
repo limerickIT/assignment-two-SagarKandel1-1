@@ -76,7 +76,7 @@ public class BeerController {
         List<Beer> beersList = beerService.findAll();
 
         if (size == null && offset == null) {
-            size = 0;
+            size =  100;
             offset = 0;
         }
 
