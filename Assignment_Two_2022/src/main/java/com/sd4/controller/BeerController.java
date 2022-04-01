@@ -158,12 +158,16 @@ public class BeerController {
     
             Optional<Beer> b = beerService.findOne(id);
     
-        String value = "";       
+        String value = "";   
+        if (id < 5) {    
         if(size.contains("large")){
         value = "/static/assets/images/large/"+b.get().getImage();
         }else{
         value = "/static/assets/images/thumbs/"+b.get().getImage();
-        }        
+        }   
+        } else {
+            value = "/static/assets/images/large/noimage.jpg";
+        }
         InputStream in = getClass().getResourceAsStream(value);
         return IOUtils.toByteArray(in);
     }
