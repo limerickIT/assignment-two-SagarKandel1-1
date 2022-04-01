@@ -130,15 +130,20 @@ public class BeerController {
     }
 
     //Return Images
-    @GetMapping(value = "/beers/image/{id}/{size}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<BufferedImage> getImagesOfBeer(@PathVariable("beerId") long beerId, @PathVariable("size") String size) throws Exception {
-        Optional<Beer> o = beerService.findOne(beerId);
-        if (o.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-} String path = "static/assets/images/"+ ("thumbnail".equalsIgnoreCase(size) ? "thumbs" : "large")
-+ "/" + o.get().getImage(); System.out.println(path);
-final InputStream inputStream = new ClassPathResource(path).getInputStream(); BufferedImage bufferedImage = ImageIO.read(inputStream);
-        return ResponseEntity.ok(bufferedImage);
+       
+    @GetMapping(value = "/beers/image/{id}/{size}",produces = MediaType.IMAGE_JPEG_VALUE)
+    byte[] getImagesOfBeer(@PathVariable long id, @PathVariable String size) throws IOException { 
+    
+            Optional<Beer> b = beerService.findOne(id);
+    
+        String value = "";       
+        if(size.contains("large")){
+        value = "/static/assets/images/large/"+b.get().getImage();
+        }else{
+        value = "/static/assets/images/thumbs/"+b.get().getImage();
+        }        
+        InputStream in = getClass().getResourceAsStream(value);
+        return IOUtils.toByteArray(in);
     }
 
 //Download Images
