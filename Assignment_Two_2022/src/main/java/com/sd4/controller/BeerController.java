@@ -65,27 +65,22 @@ public class BeerController {
     @Autowired
     private CategoryService categoryService;
 
-//    @GetMapping("/beers/GetAll")
-//    public List<Beer> getAll() {
-//        return beerService.findAll();
-//    }
-    
-    
     @GetMapping(value = "beers/GetAll", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Beer> getAllBeers(@RequestParam(name = "size", required = false) Integer size, @RequestParam(name = "offset", required = false) Integer offset) {
+    public List<Beer> getAllBeers(@RequestParam(name = "fit", required = false) Integer fit, @RequestParam(name = "page", required = false) Integer page) {
         List<Beer> beersList = beerService.findAll();
 
-        if (size == null && offset == null) {
-            size =  100;
-            offset = 0;
+        if (fit == null && page == null) {
+            fit =  100;
+            page = 0;
         }
 
-        List<Beer> pagList = beersList.subList(offset, offset + size);
+        List<Beer> pagList = beersList.subList(page, page + fit);
 
-        for (Beer b : pagList) {
-            long id = b.getId();
+        for (Beer o : pagList) {
+            long id = o.getId();
             Link selfLink = linkTo(methodOn(BeerController.class).getOne(id)).withSelfRel();
-            b.add(selfLink);
+            o.add(selfLink);
+            
         }
         return pagList;
     }
@@ -133,7 +128,7 @@ public class BeerController {
         return beerService.count();
     }
 
-    @DeleteMapping(value = "/beers/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @DeleteMapping(value = "/beers/delete/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity delete(@PathVariable long id) {
         beerService.deleteByID(id);
         return new ResponseEntity(HttpStatus.OK);
@@ -145,9 +140,8 @@ public class BeerController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @PutMapping("/beers/edit")
-    public ResponseEntity edit(@RequestBody Beer a) { //the edit method should check if the Beer object is already in the DB before attempting to save it.
-        beerService.saveBeer(a);
+    @PutMapping("/beers/edit/id")
+    public ResponseEntity edit(@RequestBody Beer a) { beerService.saveBeer(a);
         return new ResponseEntity(HttpStatus.OK);
     }
 

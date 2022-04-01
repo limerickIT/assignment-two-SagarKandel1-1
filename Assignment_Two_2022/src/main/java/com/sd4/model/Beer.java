@@ -43,10 +43,10 @@ public class Beer extends RepresentationModel<Beer> {
     private Double srm;
       
  
-    private Brewery brewery;
-    private String getName;
-    private Category category;
-    private Style style;
+//    private Brewery brewery;
+//    private String getName;
+//    private Category category;
+//    private Style style;
     
     @Lob 
     private String description;
